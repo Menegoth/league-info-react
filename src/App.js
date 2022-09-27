@@ -1,23 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+
+import ChampionIndex from "./components/ChampionIndex";
+
+import { VersionContext } from "./context/VersionContext";
 
 function App() {
+  //version state to check most recent version
+  const [version, setVersion] = useState("");
+
+  useEffect(() => {
+    //runs once on page load to fetch most recent data
+    async function fetchData() {
+      const result = await (await fetch("https://ddragon.leagueoflegends.com/api/versions.json")).json();
+      setVersion(result[0]);
+    }
+    fetchData();
+
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <VersionContext.Provider value={version}>
+        <ChampionIndex />
+      </VersionContext.Provider>
     </div>
   );
 }
